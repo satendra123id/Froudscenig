@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSafe Pro - AI Scam Scanner by sitaram Lodhi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Poppins:wght@300;500;700&display=swap');
+
+        :root {
+            --bg-dark: #0a0f16;
+            --panel-bg: #131b26;
+            --text-main: #e2e8f0;
+            --neon-green: #00ff88;
+            --neon-red: #ff3366;
+            --neon-yellow: #ffcc00;
+            --gold: #ffd700;
+            --border-glow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--panel-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #1f2d3d;
+            box-shadow: var(--border-glow);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* Top Header & Badges */
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2a3b4c; padding-bottom: 15px;}
+        h1 { margin: 0; color: var(--neon-green); font-family: 'Fira Code', monospace; font-size: 24px;}
+        h1 span { color: #fff; }
+        
+        .status-badge { background: #2a3b4c; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; font-family: 'Fira Code', monospace;}
+        .premium-active { color: var(--gold); border: 1px solid var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.1);}
+
+        textarea, input[type="number"] {
+            width: 100%; padding: 15px; background: #0d131a; border: 1px solid #2a3b4c;
+            color: var(--neon-green); font-family: 'Fira Code', monospace;
+            border-radius: 8px; box-sizing: border-box; margin-top: 8px; outline: none;
+        }
+        textarea { height: 120px; resize: vertical; }
+        textarea:focus, input:focus { border-color: var(--neon-green); }
+        label { font-size: 14px; color: #8b9cad; font-weight: 500; }
+
+        button {
+            background: var(--neon-green); color: #000; border: none; padding: 15px;
+            width: 100%; border-radius: 8px; font-size: 16px; font-weight: 700;
+            cursor: pointer; margin-top: 15px; transition: 0.3s; text-transform: uppercase;
+        }
+        button:hover { box-shadow: 0 0 15px var(--neon-green); transform: translateY(-2px); }
+        .btn-pay { background: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+
+        /* Paywall Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .paywall-box {
+            background: #131b26; padding: 30px; border-radius: 12px;
+            border: 2px solid var(--gold); text-align: center; max-width: 400px; width: 90%;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+        .paywall-box h2 { color: var(--gold); margin-top: 0; }
+        .qr-code { background: #fff; padding: 10px; border-radius: 10px; margin: 15px auto; width: 150px; height: 150px; }
+        .qr-code img { width: 100%; height: 100%; }
+
+        /* Results Area */
+        #resultArea { display: none; margin-top: 30px; padding: 20px; border-radius: 8px; background: #0d131a; border: 1px solid #2a3b4c; }
+        .score-card { display: flex; align-items: center; justify-content: space-between; padding-bottom: 15px; border-bottom: 1px solid #1f2d3d; margin-bottom: 15px; }
+        .risk-badge { padding: 10px 20px; border-radius: 5px; font-weight: bold; font-size: 18px; text-transform: uppercase; }
+        .safe { background: rgba(0, 255, 136, 0.1); color: var(--neon-green); border: 1px solid var(--neon-green); }
+        .danger { background: rgba(255, 51, 102, 0.1); color: var(--neon-red); border: 1px solid var(--neon-red); }
+        .warning { background: rgba(255, 204, 0, 0.1); color: var(--neon-yellow); border: 1px solid var(--neon-yellow); }
+        .analysis-text { line-height: 1.6; color: #a0aec0; }
+        .red-flags { margin-top: 15px; color: var(--neon-red); font-family: 'Fira Code', monospace; font-size: 13px;}
+
+        /* Advertisement Banners */
+        .ad-banner {
+            width: 100%; max-width: 800px; height: 90px;
+            background: #1e293b; border: 1px dashed #475569;
+            display: flex; align-items: center; justify-content: center;
+            color: #94a3b8; margin: 15px 0; border-radius: 8px; text-align: center; overflow: hidden;
+        }
+        .ad-banner img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+    <div class="ad-banner" id="topAd">
+        [Your Ad Banner Here]
+    </div>
+
+    <div class="modal-overlay" id="paywallModal">
+        <div class="paywall-box">
+            <h2>👑 Upgrade to Premium</h2>
+            <p style="color: #a0aec0; font-size: 14px;">Aapke 2 free scans khatam ho gaye hain. Unlimited scans aur priority protection ke liye sirf <strong>₹49</strong> pay karein.</p>
+            
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=8305462936@ibl&pn=CyberSafe%20Premium&am=49&cu=INR" alt="UPI QR Code">
+            </div>
+            
+            <p style="color: var(--neon-green); font-family: 'Fira Code', monospace; font-size: 12px;">UPI ID: 8305462936@ibl</p>
+            
+            <a href="upi://pay?pa=8305462936@ibl&pn=CyberSafe%20Premium&am=49&cu=INR" style="text-decoration: none;">
+                <button class="btn-pay" style="margin-bottom: 15px;">📱 Pay ₹49 via Any UPI App</button>
+            </a>
+
+            <div style="border-top: 1px solid #2a3b4c; padding-top: 15px; margin-top: 10px;">
+                <label style="color: #fff;">Payment ke baad 12-digit UTR/Ref No. yahan dalein:</label>
+                <input type="number" id="utrInput" placeholder="e.g. 312345678901" style="text-align: center;">
+                <button onclick="verifyPayment()" style="background: var(--gold); color: #000;">Verify & Unlock</button>
+                <p id="payError" style="color: var(--neon-red); font-size: 12px; display: none;">Invalid UTR! 12 numbers ka UTR dalein.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container" id="mainApp">
+        <div class="header-flex">
+            <h1>Cyber<span>Safe</span> 🛡️</h1>
+            <div id="accountStatus" class="status-badge">Free: 2 Scans Left</div>
+        </div>
+
+        <div>
+            <label>Suspicious Link ya WhatsApp Message Paste Karein:</label>
+            <textarea id="scanInput" placeholder="E.g., 'Aapki 25 lakh ki lottery lagi hai! Click here: http://bit.ly/xyz' ..."></textarea>
+        </div>
+
+        <button id="scanBtn" onclick="initiateScan()">🔍 Scan Now</button>
+
+        <div id="resultArea">
+            <div class="score-card">
+                <div>
+                    <h3 style="margin: 0; color: #fff;">Threat Analysis Report</h3>
+                    <small id="scanTime" style="color: #64748b;"></small>
+                </div>
+                <div id="riskBadge" class="risk-badge safe">SAFE</div>
+            </div>
+            <h4 style="color: #fff; margin-bottom: 5px;">Security Analysis:</h4>
+            <div id="analysisText" class="analysis-text"></div>
+            <div id="flagsContainer" style="display: none;">
+                <h4 style="color: var(--neon-red); margin-bottom: 5px; margin-top: 20px;">⚠️ Red Flags Detected:</h4>
+                <ul id="redFlagsList" class="red-flags"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="ad-banner" id="bottomAd">
+        [Your Ad Banner Here]
+    </div>
+
+    <script>
+        let freeScansLimit = 2;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAccountStatus();
+        });
+
+        function checkAccountStatus() {
+            let isPremium = localStorage.getItem('isPremium') === 'true';
+            let scansUsed = parseInt(localStorage.getItem('scansUsed') || '0');
+            const statusBadge = document.getElementById('accountStatus');
+
+            if (isPremium) {
+                statusBadge.innerText = "👑 PREMIUM ACTIVE";
+                statusBadge.className = "status-badge premium-active";
+                document.documentElement.style.setProperty('--border-glow', '0 0 15px rgba(255, 215, 0, 0.4)');
+                document.documentElement.style.setProperty('--neon-green', '#ffd700'); 
+            } else {
+                let left = freeScansLimit - scansUsed;
+                if (left <= 0) {
+                    statusBadge.innerText = "0 Free Scans Left";
+                    statusBadge.style.color = "var(--neon-red)";
+                } else {
+                    statusBadge.innerText = `Free: ${left} Scans Left`;
+                }
+            }
+        }
+
+        // Smart Offline Logic (Bina API)
+        function analyzeTextLocal(text) {
+            let textLower = text.toLowerCase();
+            let redFlags = [];
+            let riskLevel = "SAFE";
+            let analysis = "Yeh message safe lag raha hai. Par anjaan logo ko apni details na dein.";
+
+            const urgencyWords = ["urgent", "block", "suspend", "action required", "band ho jayega", "turant"];
+            const moneyWords = ["lottery", "prize", "cash", "free money", "winner", "jeeto", "lakho", "kbc"];
+            const dataWords = ["otp", "password", "pin", "kyc", "bank", "aadhar", "pan card"];
+            const sketchyLinks = ["bit.ly", "tinyurl", "ngrok", "xyz", "http://", "free-recharge"]; 
+
+            if (urgencyWords.some(word => textLower.includes(word))) redFlags.push("Account block ya urgent action ka darr dikhaya ja raha hai.");
+            if (moneyWords.some(word => textLower.includes(word))) redFlags.push("Fake lottery ya free paiso ka lalach diya gaya hai.");
+            if (dataWords.some(word => textLower.includes(word))) redFlags.push("Aapse OTP ya Bank details mangi ja rahi hain (kabhi share na karein).");
+            if (sketchyLinks.some(word => textLower.includes(word)) || (textLower.includes("http") && !textLower.includes("https"))) {
+                redFlags.push("Anjaan ya unsecure link paya gaya hai. Click na karein!");
+            }
+
+            if (redFlags.length >= 2) {
+                riskLevel = "DANGER";
+                analysis = "⚠️ ALERT! Yeh message 100% scam lag raha hai. Isme diye gaye link par click na karein.";
+            } else if (redFlags.length === 1) {
+                riskLevel = "WARNING";
+                analysis = "Suspicious activity detect hui hai. Kripya is message par dhyan se react karein.";
+            }
+
+            return { risk_level: riskLevel, analysis: analysis, red_flags: redFlags };
+        }
+
+        function initiateScan() {
+            let isPremium = localStorage.getItem('isPremium') === 'true';
+            let scansUsed = parseInt(localStorage.getItem('scansUsed') || '0');
+
+            if (!isPremium && scansUsed >= freeScansLimit) {
+                document.getElementById('paywallModal').style.display = 'flex';
+                return; 
+            }
+
+            const inputData = document.getElementById('scanInput').value.trim();
+            if(!inputData) return alert("Pehle koi message ya link paste karein!");
+
+            const btn = document.getElementById('scanBtn');
+            btn.innerText = "⏳ Deep Scanning System... Please Wait";
+            btn.style.opacity = "0.7";
+            document.getElementById('resultArea').style.display = 'none';
+
+            // Fake processing delay
+            setTimeout(() => {
+                const result = analyzeTextLocal(inputData);
+                
+                if (!isPremium) {
+                    localStorage.setItem('scansUsed', scansUsed + 1);
+                    checkAccountStatus();
+                }
+
+                displayResults(result);
+                btn.innerText = "🔍 Scan Now";
+                btn.style.opacity = "1";
+            }, 1500); 
+        }
+
+        function displayResults(data) {
+            const area = document.getElementById('resultArea');
+            const badge = document.getElementById('riskBadge');
+            const flagsContainer = document.getElementById('flagsContainer');
+            const flagsList = document.getElementById('redFlagsList');
+            
+            area.style.display = 'block';
+            document.getElementById('scanTime').innerText = "Scanned at: " + new Date().toLocaleTimeString();
+            document.getElementById('analysisText').innerText = data.analysis;
+
+            badge.innerText = data.risk_level;
+            badge.className = 'risk-badge'; 
+            if(data.risk_level === 'DANGER') badge.classList.add('danger');
+            else if(data.risk_level === 'WARNING') badge.classList.add('warning');
+            else badge.classList.add('safe');
+
+            if(data.red_flags && data.red_flags.length > 0) {
+                flagsContainer.style.display = 'block';
+                flagsList.innerHTML = '';
+                data.red_flags.forEach(flag => {
+                    const li = document.createElement('li');
+                    li.innerText = "[!] " + flag;
+                    flagsList.appendChild(li);
+                });
+            } else {
+                flagsContainer.style.display = 'none';
+            }
+        }
+
+        function verifyPayment() {
+            const utr = document.getElementById('utrInput').value.trim();
+            const errorText = document.getElementById('payError');
+            
+            if(utr.length >= 10 && utr.length <= 15) {
+                localStorage.setItem('isPremium', 'true');
+                document.getElementById('paywallModal').style.display = 'none';
+                checkAccountStatus();
+                alert("🎉 Payment Verified! Aapka account Premium ban gaya hai.");
+            } else {
+                errorText.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
+
